@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 
 interface MultipleChoiceQuestionProps {
-    question: string;
     options: string[];
     onChange: (answers: string[]) => void;
 }
 
-const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({ question, options, onChange }) => {
+const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({ options, onChange }) => {
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
     const handleChange = (option: string) => {
@@ -20,19 +19,18 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({ questio
 
     return (
         <div>
-        <p>{question}</p>
-        {options.map((option, index) => (
-            <div key={index}>
-            <input
-                type="checkbox"
-                id={option}
-                name="multiple-choice"
-                value={option}
-                onChange={() => handleChange(option)}
-            />
-            <label htmlFor={option}>{option}</label>
-            </div>
-        ))}
+            {options.map((option, index) => (
+                <div key={index}>
+                <input
+                    type="checkbox"
+                    id={option}
+                    name="multiple-choice"
+                    value={option}
+                    onChange={() => handleChange(option)}
+                />
+                <label htmlFor={option}>{option}</label>
+                </div>
+            ))}
         </div>
     );
 };
