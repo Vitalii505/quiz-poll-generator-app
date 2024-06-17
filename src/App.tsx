@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
-import { generateQuestions } from './api/ChatGPTService';
+import { generateQuestions, generateEvaluationOfResults } from './api/ChatGPTService';
 import SingleChoiceQuestion from './components/questions/SingleChoiceQuestion';
 import MultipleChoiceQuestion from './components/questions/MultipleChoiceQuestion';
 import SliderQuestion from './components/questions/SliderQuestion';
@@ -13,10 +13,12 @@ const App: React.FC = () => {
     const [apiKey, setApiKey] = useState('');
     const [questions, setQuestions] = useState<any[]>([]);
     const [answers, setAnswers] = useState<any>({});
+    const [resultAnswers, setResultAnswers] = useState<string>('');
     const [styles, setStyles] = useState('');
     const [error, setError] = useState('');
     const [isGenerateStatus, setIsGenerateStatus] = React.useState(false);
     const [isSetQuestionsParam, setIsSetQuestionsParam] = React.useState(false);
+    const [isAnswerResult, setIsAnswerResult] = React.useState(false);
     const [activeStep, setActiveStep] = React.useState(0);
 
     const handleSetQuestionsParam = () => {
@@ -30,21 +32,22 @@ const App: React.FC = () => {
         setIsSetQuestionsParam(true);
         setIsGenerateStatus(true);
         try {
-            const generatedQuestions = await generateQuestions({ theme, apiKey, numQuestions: 10 });
+            const generatedQuestions = await generateQuestions({ theme, apiKey });
             const _generatedQuestions = generatedQuestions?.questions;
             setQuestions(_generatedQuestions as []);
             setStyles(generateStyles());
             setIsGenerateStatus(false);
+            handleReset();
         } catch (e) {
             setIsGenerateStatus(false);
             alert('Error OpenAI API request: ' + e);
         }
     };
 
-    const handleAnswerChange = (questionIndex: number, answer: any) => {
+    const handleAnswerChange = (questionText: string, answer: any) => {
         setAnswers({
             ...answers,
-            [questionIndex]: answer
+            [questionText]: answer
         });
     };
 
@@ -52,9 +55,18 @@ const App: React.FC = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
 
-    const handleEndQuestion = () => {
+    const handleEndQuestion = async () => {
         handleNext();
-        alert(`Results: ${JSON.stringify(answers, null, 2)}`);
+        setIsAnswerResult(true);
+        setIsGenerateStatus(true);
+        try {
+            const response = await generateEvaluationOfResults({ theme, apiKey, answers });
+            setResultAnswers(response as string);
+            setIsGenerateStatus(false);
+        } catch (e) {
+            setIsGenerateStatus(false);
+            alert('Error OpenAI API request: ' + e);
+        }
     };
 
     const handleBack = () => {
@@ -124,7 +136,7 @@ const App: React.FC = () => {
             <Box
                 sx={{maxWidth: 800}}
             >
-                <Stepper activeStep={activeStep} orientation="vertical">   
+                {isSetQuestionsParam && <Stepper activeStep={activeStep} orientation="vertical">   
                     {(questions || []).map((question, index) => {
                     switch (question?.type) {
                         case 'single-choice':
@@ -137,7 +149,7 @@ const App: React.FC = () => {
                                     <SingleChoiceQuestion
                                         key={index}
                                         options={question.options}
-                                        onChange={(answer) => handleAnswerChange(index, answer)}
+                                        onChange={(answer) => handleAnswerChange(question.text, answer)}
                                     />
                                     <Box sx={{ mb: 2 }}>
                                         <div>
@@ -169,7 +181,7 @@ const App: React.FC = () => {
                                     <MultipleChoiceQuestion
                                         key={index}
                                         options={question.options}
-                                        onChange={(answers) => handleAnswerChange(index, answers)}
+                                        onChange={(answers) => handleAnswerChange(question.text, answers)}
                                     />
                                     <Box sx={{ mb: 2 }}>
                                         <div>
@@ -202,7 +214,7 @@ const App: React.FC = () => {
                                         key={index}
                                         min={question.min}
                                         max={question.max}
-                                        onChange={(value) => handleAnswerChange(index, value)}
+                                        onChange={(value) => handleAnswerChange(question.text, value)}
                                     />
                                     <Box sx={{ mb: 2 }}>
                                         <div>
@@ -233,7 +245,7 @@ const App: React.FC = () => {
                                 <StepContent>
                                     <TextQuestion
                                         key={index}
-                                        onChange={(answer) => handleAnswerChange(index, answer)}
+                                        onChange={(answer) => handleAnswerChange(question.text, answer)}
                                     />
                                     <Box sx={{ mb: 2 }}>
                                         <div>
@@ -259,10 +271,10 @@ const App: React.FC = () => {
                             return null;
                     }
                     })}        
-                </Stepper>
-                {((activeStep === questions?.length) && (isSetQuestionsParam)) && (
+                </Stepper>}
+                {((activeStep === questions?.length) && (isAnswerResult) && (isSetQuestionsParam)) && (
                     <Paper square elevation={0} sx={{ p: 3 }} className='survey-result-box'>
-                        <Typography>All steps completed - you&apos;re finished</Typography>
+                        <Typography>{resultAnswers}</Typography>
                         <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
                             Reset
                         </Button>

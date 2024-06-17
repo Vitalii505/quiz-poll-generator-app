@@ -1,11 +1,16 @@
 import OpenAI from "openai";
-import { setSystemPrompt } from "../prompts";
+import { setSystemPrompt, setUserPrompt } from "../prompts";
 
 
 interface GenerateQuestionsParams {
     theme: string;
     apiKey: string;
-    numQuestions: number;
+}
+
+interface GenerateAnswersParams {
+    theme: string;
+    apiKey: string;
+    answers: string;
 }
 
 interface Question {
@@ -31,7 +36,7 @@ const parseSurveyResponse = (response: string): Survey => {
     }
 };
 
-export async function generateQuestions({ theme, apiKey, numQuestions }: GenerateQuestionsParams) {
+export async function generateQuestions({ theme, apiKey }: GenerateQuestionsParams) {
     const openai = new OpenAI({
         apiKey: apiKey,
         dangerouslyAllowBrowser: true
@@ -48,4 +53,28 @@ export async function generateQuestions({ theme, apiKey, numQuestions }: Generat
     const _generatedQuestions = response.choices[0].message.content;
     const survey = parseSurveyResponse(_generatedQuestions as any);
     return survey;
+}
+export async function generateEvaluationOfResults({ theme, apiKey, answers }: GenerateAnswersParams) { 
+    const openai = new OpenAI({
+        apiKey: apiKey,
+        dangerouslyAllowBrowser: true
+    });
+    const systemPrompt = setSystemPrompt(theme);
+    const userPrompt = setUserPrompt(theme, answers);
+    const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+            {
+                role: "system",
+                content: systemPrompt
+            },
+            {
+                role: "user",
+                content: userPrompt
+            }
+        ],
+        max_tokens: 1500
+    });
+    const generatedResult = response.choices[0].message.content;
+    return generatedResult;
 }

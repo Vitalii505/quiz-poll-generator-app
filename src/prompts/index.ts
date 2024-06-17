@@ -34,3 +34,13 @@ export function setSystemPrompt(theme: string) {
     `;
     return prompt;
 }
+
+export function setUserPrompt(theme: string, results: string) {
+    const prompt = `
+        Next, compare the quiz you created on the topic: ${theme} and evaluate the results of the answers to each question.
+        ${results}
+        Give a high-quality, accurate and concise assessment of the results of the quiz on the topic: ${theme}. 
+        In the response, return only the assessment of the quiz results in text format!
+    `;
+    return prompt;
+}
