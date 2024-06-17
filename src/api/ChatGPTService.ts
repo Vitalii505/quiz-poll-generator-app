@@ -44,11 +44,8 @@ export async function generateQuestions({ theme, apiKey, numQuestions }: Generat
         response_format: {
             type: "json_object",
         },
-        // temperature: 0.7,
     });
     const _generatedQuestions = response.choices[0].message.content;
     const survey = parseSurveyResponse(_generatedQuestions as any);
-    console.log("******* _1_ _generatedQuestions ****** ")
-    console.log(survey);
     return survey;
 }
