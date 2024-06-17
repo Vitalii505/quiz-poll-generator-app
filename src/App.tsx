@@ -53,7 +53,6 @@ const App: React.FC = () => {
     };
 
     const handleEndQuestion = () => {
-        console.log('Results:', answers);
         handleNext();
         alert(`Results: ${JSON.stringify(answers, null, 2)}`);
     };
@@ -264,6 +263,9 @@ const App: React.FC = () => {
                 {((activeStep === questions?.length) && (isSetQuestionsParam)) && (
                     <Paper square elevation={0} sx={{ p: 3 }} className='survey-result-box'>
                         <Typography>All steps completed - you&apos;re finished</Typography>
+                        <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
+                            Reset
+                        </Button>
                     </Paper>
                 )}
             </Box>
