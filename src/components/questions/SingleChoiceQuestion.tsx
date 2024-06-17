@@ -1,3 +1,4 @@
+import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import React from 'react';
 
 interface SingleChoiceQuestionProps {
@@ -8,18 +9,28 @@ interface SingleChoiceQuestionProps {
 const SingleChoiceQuestion: React.FC<SingleChoiceQuestionProps> = ({ options, onChange }) => {
     return (
         <div>
-            {options.map((option, index) => (
-                <div key={index}>
-                <input
-                    type="radio"
-                    id={option}
-                    name="single-choice"
-                    value={option}
-                    onChange={(e) => onChange(e.target.value)}
-                />
-                <label htmlFor={option}>{option}</label>
-                </div>
-            ))}
+            <FormControl>
+                <RadioGroup
+                    aria-labelledby="demo-radio-buttons-group-label"
+                    defaultValue="female"
+                    name="radio-buttons-group"
+                >
+                    {options.map((option, index) => (
+                        <div key={index}>
+                            <FormControlLabel
+                                value={options}
+                                control={<Radio
+                                    id={option}
+                                    value={option}
+                                    name="single-choice"
+                                    onChange={(e) => onChange(e.target.value)}
+                                />}
+                                label={option}
+                            />
+                        </div>
+                    ))}
+                </RadioGroup>
+            </FormControl>
         </div>
     );
 };

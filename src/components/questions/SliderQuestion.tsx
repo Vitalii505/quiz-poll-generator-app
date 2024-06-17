@@ -7,7 +7,7 @@ interface SliderQuestionProps {
 }
 
 const SliderQuestion: React.FC<SliderQuestionProps> = ({ min, max, onChange }) => {
-    const [value, setValue] = useState((min + max) / 2);
+    const [value, setValue] = useState(((min + max) / 2) || 50);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = Number(event.target.value);

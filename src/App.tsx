@@ -52,17 +52,18 @@ const App: React.FC = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
 
+    const handleEndQuestion = () => {
+        console.log('Results:', answers);
+        handleNext();
+        alert(`Results: ${JSON.stringify(answers, null, 2)}`);
+    };
+
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
     const handleReset = () => {
         setActiveStep(0);
-    };
-
-    const handleSubmit = () => {
-        console.log('Results:', answers);
-        alert(`Results: ${JSON.stringify(answers, null, 2)}`);
     };
 
     useEffect(() => {
@@ -143,7 +144,7 @@ const App: React.FC = () => {
                                         <div>
                                             <Button
                                                 variant="contained"
-                                                onClick={handleNext}
+                                                onClick={index === questions.length - 1 ? handleEndQuestion : handleNext}
                                                 sx={{ mt: 1, mr: 1 }}
                                             >
                                                 {index === questions?.length - 1 ? 'Finish' : 'Continue'}
@@ -175,7 +176,7 @@ const App: React.FC = () => {
                                         <div>
                                             <Button
                                                 variant="contained"
-                                                onClick={handleNext}
+                                                onClick={index === questions.length - 1 ? handleEndQuestion : handleNext}
                                                 sx={{ mt: 1, mr: 1 }}
                                             >
                                                 {index === questions.length - 1 ? 'Finish' : 'Continue'}
@@ -208,7 +209,7 @@ const App: React.FC = () => {
                                         <div>
                                             <Button
                                                 variant="contained"
-                                                onClick={handleNext}
+                                                onClick={index === questions.length - 1 ? handleEndQuestion : handleNext}
                                                 sx={{ mt: 1, mr: 1 }}
                                             >
                                                 {index === questions.length - 1 ? 'Finish' : 'Continue'}
@@ -239,7 +240,7 @@ const App: React.FC = () => {
                                         <div>
                                             <Button
                                                 variant="contained"
-                                                onClick={handleNext}
+                                                onClick={index === questions.length - 1 ? handleEndQuestion : handleNext}
                                                 sx={{ mt: 1, mr: 1 }}
                                             >
                                                 {index === questions.length - 1 ? 'Finish' : 'Continue'}
@@ -261,15 +262,11 @@ const App: React.FC = () => {
                     })}        
                 </Stepper>
                 {((activeStep === questions?.length) && (isSetQuestionsParam)) && (
-                    <Paper square elevation={0} sx={{ p: 3 }}>
+                    <Paper square elevation={0} sx={{ p: 3 }} className='survey-result-box'>
                         <Typography>All steps completed - you&apos;re finished</Typography>
-                        <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-                            Reset
-                        </Button>
                     </Paper>
                 )}
             </Box>
-            <button onClick={handleSubmit} style={{margin: "10px"}}>Submit</button>
         </div>
         </div>
     );

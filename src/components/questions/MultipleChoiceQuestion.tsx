@@ -1,3 +1,4 @@
+import { Checkbox, FormControl, FormControlLabel, FormGroup } from '@mui/material';
 import React, { useState } from 'react';
 
 interface MultipleChoiceQuestionProps {
@@ -19,18 +20,22 @@ const MultipleChoiceQuestion: React.FC<MultipleChoiceQuestionProps> = ({ options
 
     return (
         <div>
-            {options.map((option, index) => (
-                <div key={index}>
-                <input
-                    type="checkbox"
-                    id={option}
-                    name="multiple-choice"
-                    value={option}
-                    onChange={() => handleChange(option)}
-                />
-                <label htmlFor={option}>{option}</label>
-                </div>
-            ))}
+            <FormControl>
+                <FormGroup>
+                    {options.map((option, index) => (
+                        <div key={index}>
+                            <FormControlLabel required control={<Checkbox
+                                id={option}
+                                name="multiple-choice"
+                                value={option}
+                                onChange={() => handleChange(option)}
+                            />}
+                                label={option}
+                            />
+                        </div>
+                    ))}
+                </FormGroup>
+            </FormControl>
         </div>
     );
 };

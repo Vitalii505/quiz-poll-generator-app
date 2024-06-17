@@ -5,7 +5,7 @@ export function setSystemPrompt(theme: string) {
         Each quiz should include:
         - At least one single-choice question with options
         - At least one multiple-choice question with options
-        - At least one progress bar question with a scale (e.g., 1 to 10)
+        - At least one progress bar question with a scale (e.g., 1 to 100)
         - At least one text response question
         Format the response as a JSON object with the following structure:
         {
@@ -23,7 +23,7 @@ export function setSystemPrompt(theme: string) {
                 {
                     "type": "progress-bar",
                     "text": "Question text here",
-                    "scale": { "min": 1, "max": 10 }
+                    "scale": { "min": 1, "max": 100 }
                 },
                 {
                     "type": "text",
